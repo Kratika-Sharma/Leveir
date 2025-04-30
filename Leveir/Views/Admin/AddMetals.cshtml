@@ -1,0 +1,128 @@
+﻿@model Leveir.Models.Metals
+@{
+    ViewBag.Title = "AddMetals";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-page">
+    <div class="content">
+        <div class="container-xxl">
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">Metals</h4>
+                </div>
+                <div class="text-end">
+                    <ol class="breadcrumb m-0 py-0">
+                        <li class="breadcrumb-item"><a href="">Metals Lists</a></li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Add Metals</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="AddMetalForm" action="@Url.Action("AddMetals", "Admin")" method="post">
+                                <input type="hidden" name="MetalId" value="@Model.MetalId" />
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="example-select" class="form-label">Choose Jewelry Type</label>
+                                            <select id="JewelryTypeId" name="JewelryTypeId" class="form-control">
+                                                <option value="">-- Select Jewelry Type --</option>
+                                                @foreach (var item in ViewBag.JewelryTypes as SelectList)
+                                                {
+                                                    <option value="@item.Value" @(item.Value == Model.JewelryTypeId.ToString() ? "selected" : "")>@item.Text</option>
+                                                }
+                                            </select>
+                                            <small id="jewelryTypeError" class="text-danger d-none">Please choose a valid Jewelry Type.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="example-select" class="form-label">Setting style</label>
+                                            <select id="SettingStyleId" name="SettingStyleId" class="form-control">
+                                                <option value="">-- Select Setting Style --</option>
+                                                @if (ViewBag.SettingStyles != null)
+                                                {
+                                                    foreach (var item in ViewBag.SettingStyles as SelectList)
+                                                    {
+                                                        <option value="@item.Value" @(item.Value == Model.SettingStyleId.ToString() ? "selected" : "")>@item.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="MetalName" class="form-label">Metal Name</label>
+                                            <input type="text" class="form-control" placeholder="MetalName" name="MetalName" id="MetalName" value="@Model.MetalName" />
+                                            <small id="metalNameError" class="text-danger d-none">Metal Name is required.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="MetalPrice" class="form-label">MetalPrice</label>
+                                            <input type="text" class="form-control" name="MetalPrice" id="MetalPrice" value="@Model.MetalPrice" />
+                                            <small id="metalPriceError" class="text-danger d-none">Metal Price is required.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="MetalQuantity" class="form-label">MetalQuantity</label>
+                                            <input type="text" class="form-control" name="MetalQuantity" id="MetalQuantity" value="@Model.MetalQuantity" />
+                                            <small id="metalQuantityError" class="text-danger d-none">Metal Quantity is required.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="MetalCarat" class="form-label">MetalCarat</label>
+                                            <input type="text" class="form-control" name="MetalCarat" id="MetalCarat" value="@Model.MetalCarat" />
+                                            <small id="metalCaratError" class="text-danger d-none">Metal Carat is required.</small>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="Description" class="form-label">Description</label>
+                                        <input type="text" class="form-control" name="Description" id="Description" value="@Model.Description" />
+                                        <small id="descriptionError" class="text-danger d-none">Description is required.</small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    @(Model.MetalId > 0 ? "Update" : "Submit")
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $("#JewelryTypeId").change(function () {
+                var id = $(this).val();
+                if (id) {
+                    $.ajax({
+                        url: '@Url.Action("GetSettingStyles", "Admin")',
+                        type: "GET",
+                        data: { jewelryTypeId: id },
+                        success: function (data) {
+                            var settingStyleDropdown = $("#SettingStyleId");
+                            settingStyleDropdown.empty();
+                            settingStyleDropdown.append('<option value="">-- Select Setting Style --</option>');
+                            $.each(data, function (i, style) {
+                                settingStyleDropdown.append('<option value="' + style.SettingStyleId + '">' + style.StyleName + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $("#SettingStyleId").empty().append('<option value="">-- Select Setting Style --</option>');
+                }
+            });
+        });
+</script>
+
+<script src="~/Content/Admin_assets/js/ClinetSideValidation.js"></script>

@@ -1,0 +1,108 @@
+﻿@model Leveir.Models.SettingStyles
+
+@{
+    ViewBag.Title = "AddSettingStyle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+<div class="content-page">
+    <div class="content">
+        <div class="container-xxl">
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">Setting Style</h4>
+                </div>
+                <div class="text-end">
+                    <ol class="breadcrumb m-0 py-0">
+                        <li class="breadcrumb-item"><a href="">Setting Style Lists</a></li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Add Setting Style</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="addSettingStyleForm" action="@Url.Action("AddSettingStyle", "Admin")" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="SettingStyleId" value="@Model.SettingStyleId" />
+                                <input type="hidden" name="StyleImg" value="@Model.StyleImg" />
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Choose Jewelry Type</label>
+                                            @*<select id="JewelryTypeId" name="JewelryTypeId" class="form-control" value="@Model.JewelryTypeId">
+            <option value="">-- Select Jewelry Type --</option>
+            @foreach (var item in ViewBag.JewelryTypes as SelectList)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>*@
+                                            <select id="JewelryTypeId" name="JewelryTypeId" class="form-control">
+                                                <option value="">-- Select Jewelry Type --</option>
+                                                @foreach (var item in ViewBag.JewelryTypes as SelectList)
+                                                {
+                                                    <option value="@item.Value" @(item.Value == Model.JewelryTypeId.ToString() ? "selected" : "")>@item.Text</option>
+                                                }
+                                            </select>
+
+                                            <small id="jewelryTypeError" class="text-danger d-none">Please choose a valid Jewelry Type.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Style Name</label>
+                                            <input type="text" class="form-control" id="StyleName" placeholder="Enter Style Name" name="StyleName" value="@Model.StyleName" />
+                                            <small id="styleNameError" class="text-danger d-none">Style Name is required.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="Description" placeholder="Description" name="Description" value="@Model.Description" />
+                                    <small id="descriptionError" class="text-danger d-none">Description is required.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Style Image</label>
+                                    <input type="file" id="StyleImg" class="form-control" name="SettingStyleImg" />
+                                    @if (!string.IsNullOrEmpty(Model.StyleImg))
+                                    {
+                                        <img src="@Url.Content("~/Content/Admin_assets/images/UploadedImages/SettingStyle/" + Model.StyleImg)" alt="Current Image" style="width:100px; margin-top:10px;" />
+                                    }
+                                    <small id="styleImageError" class="text-danger d-none">Style Image is required.</small>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Style Quantity</label>
+                                            <input type="number" class="form-control" id="StyleQuantity" name="StyleQuantity" value="@Model.StyleQuantity" />
+                                            <small id="styleQuantityError" class="text-danger d-none">Style Quantity is required.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Style Price</label>
+                                            <input type="text" class="form-control" id="StylePrice" name="StylePrice" value="@Model.StylePrice" />
+                                            <small id="stylePriceError" class="text-danger d-none">Style Price is required.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    @(Model.SettingStyleId > 0 ? "Update" : "Submit")
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/Admin_assets/js/ClinetSideValidation.js"></script>

@@ -1,0 +1,71 @@
+﻿@model Leveir.Models.JewelryTypes
+
+@{
+    ViewBag.Title = "AddJewelryTypes";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-page">
+    <div class="content">
+        <div class="container-xxl">
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">Jewelry Types</h4>
+                </div>
+                <div class="text-end">
+                    <ol class="breadcrumb m-0 py-0">
+                        <li class="breadcrumb-item"><a href="">Jewelry Type Lists</a></li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Add Jewelry Types</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="addJewelryForm" action="@Url.Action("AddJewelryTypes", "Admin")" method="post" enctype="multipart/form-data" novalidate>
+                                <input type="hidden" name="JewelryTypeId" value="@Model.JewelryTypeId" />
+
+                                <div class="mb-3">
+                                    <label for="JewelryName" class="form-label">Jewelry Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter Jewelry Name" name="JewelryName" id="JewelryName" value="@Model.JewelryName" />
+                                    <small class="text-danger d-none" id="nameError">Jewelry Name is required.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="Description" class="form-label">Jewelry Description</label>
+                                    <input type="text" class="form-control" placeholder="Description" name="Description" id="Description" value="@Model.Description" />
+                                    <small class="text-danger d-none" id="descriptionError">Jewelry Description is required.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="JewelryImg" class="form-label">Jewelry Image</label>
+                                    <input type="file" class="form-control" name="JewelryImg" id="JewelryImg" />
+
+                                    <!-- Hidden field for old image -->
+                                    <input type="hidden" name="JewelryImgName" value="@Model.JewelryImgName" />
+
+                                    <small class="text-danger d-none" id="imageError">Jewelry Image is required.</small>
+
+                                    @if (!string.IsNullOrEmpty(Model.JewelryImgName))
+                                    {
+                                        <div class="mt-2">
+                                            <img src="~/Content/Admin_assets/images/UploadedImages/JewelryType/@Model.JewelryImgName" style="height:100px;" alt="Jewelry Image" />
+                                        </div>
+                                    }
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    @(Model != null && Model.JewelryTypeId > 0 ? "Update" : "Submit")
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/Admin_assets/js/ClinetSideValidation.js"></script>

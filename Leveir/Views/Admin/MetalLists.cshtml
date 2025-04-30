@@ -1,0 +1,92 @@
+﻿@model List<Leveir.Models.Metals>
+@{
+    ViewBag.Title = "MetalLists";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div style="margin-top: 110px;" class="content-page">
+    <div class="content">
+        <nav class="ps-lg-2" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Admin")">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Setting Style Lists</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-5">
+                @if (TempData["MetalSuccessMsg"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["MetalSuccessMsg"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </div>
+        </div>
+        <!-- Datatables  -->
+        <div class="row">
+
+            <div class="col-12 ">
+                <div class="card">
+
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Metals Lists</h5>
+                    </div><!-- end card header -->
+
+                    <div class="card-body overflow-x-auto">
+                        <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Sno</th>
+                                    <th>MetalId</th>
+                                    <th>JewelryName</th>
+                                    <th>StyleName</th>
+                                    <th>MetalName</th>
+                                    <th>MetalPrice</th>
+                                    <th>Description</th>
+                                    <th>MetalQuantity</th>
+                                    <th>MetalCarat</th>
+                                    <th>Created_dt</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sno = 1;
+                                }
+                                @foreach (var items in Model)
+                                {
+                                    <tr>
+                                        <td>@sno</td>
+                                        <td>@items.MetalId</td>
+                                        <td>@items.JewelryName</td>
+                                        <td>@items.StyleName</td>
+                                        <td>@items.MetalName</td>
+                                        <td>@items.MetalPrice</td>
+                                        <td>@items.Description</td>
+                                        <td>@items.MetalQuantity</td>
+                                        <td>@items.MetalCarat</td>
+                                        <td>@items.Created_dt</td>
+                                        <td>
+
+                                            <a href="#">
+                                                <i class="fa-solid fa-trash text-danger fs-5"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("AddMetals", "Admin", new { id = items.MetalId})">
+                                                <i class="ps-lg-2 fs-5 fa-solid fa-pen-to-square text-success"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    sno++;
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
