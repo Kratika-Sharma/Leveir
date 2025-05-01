@@ -1,0 +1,139 @@
+﻿﻿@model Leveir.Models.Diamonds
+@{
+    ViewBag.Title = "AddDiamonds";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-xxl">
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">Diamonds</h4>
+                </div>
+                <div class="text-end">
+                    <ol class="breadcrumb m-0 py-0">
+                        <li class="breadcrumb-item"><a href="">Diamond Lists</a></li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Add Diamonds</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="@Url.Action("AddDiamonds", "Admin")" method="post" enctype="multipart/form-data" id="diamondForm">
+                                <input type="hidden" name="DiamondId" value="@Model.DiamondId" />
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Choose Jewelry Type</label>
+                                            <select class="form-control" name="DiamondTypeId" id="DiamondTypeId">
+                                                <option value="">-- Select Diamond Type --</option>
+                                                @if (ViewBag.DiamondLists != null)
+                                                {
+                                                    foreach (var items in (List<Leveir.Models.Diamonds>)ViewBag.DiamondLists)
+                                                    {
+                                                        if (items.DiamondTypeId == Model.DiamondTypeId)
+                                                        {
+                                                            <option value="@items.DiamondTypeId" selected>@items.DiamondTypeName</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@items.DiamondTypeId">@items.DiamondTypeName</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                            <small id="DiamondTypeIdError" class="text-danger d-none">Please select a diamond type</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Shape</label>
+                                            <input type="text" class="form-control" name="Shape" id="Shape" value="@Model.Shape" placeholder="Enter Shape ...like circle square" />
+                                            <small id="ShapeError" class="text-danger d-none">Please enter the shape</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Color</label>
+                                            <input type="text" class="form-control" name="Color" id="Color" value="@Model.Color" placeholder="Enter Color ...like Rose Gold, White" />
+                                            <small id="ColorError" class="text-danger d-none">Please enter the color</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Clarity</label>
+                                            <input type="text" class="form-control" name="Clarity" id="Clarity" value="@Model.Clarity" placeholder="Enter Clarity ...like SL2, VS2, VS1" />
+                                            <small id="ClarityError" class="text-danger d-none">Please enter the clarity</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Carat</label>
+                                            <input type="text" class="form-control" name="Carat" id="Carat" value="@Model.Carat" placeholder="Enter Carat ...like 0.15, 1.25, 35" />
+                                            <small id="CaratError" class="text-danger d-none">Please enter the carat</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Cut</label>
+                                            <input type="text" class="form-control" name="Cut" id="Cut" value="@Model.Cut" placeholder="Enter Cut ...like Good,Very Good, Excellent" />
+                                            <small id="CutError" class="text-danger d-none">Please enter the cut</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Diamond Image</label>
+                                            <input type="File" class="form-control" name="DiamondImg" id="DiamondImg" />
+                                            <input type="hidden" name="DiamondImgName" value="@Model.DiamondImgName" />
+                                            @if (!string.IsNullOrEmpty(Model.DiamondImgName))
+                                            {
+                                                <div class="mt-2">
+                                                    <img src="~/Content/Admin_assets/images/UploadedImages/DiamondImages/@Model.DiamondImgName" style="height:100px;" alt="Diamond Image" />
+                                                </div>
+                                            }
+                                            <small id="DiamondImgError" class="text-danger d-none">Please select an image</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Price</label>
+                                            <input type="number" class="form-control" name="Price" id="Price" value="@Model.Price" placeholder="Enter Price" />
+                                            <small id="PriceError" class="text-danger d-none">Please enter a valid price</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Stock Quantity</label>
+                                            <input type="number" class="form-control" name="StockQuantity" id="StockQuantity" value="@Model.StockQuantity" placeholder="Enter Stock Quantity" />
+                                            <small id="StockQuantityError" class="text-danger d-none">Please enter a valid quantity</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    @(Model != null && Model.DiamondId > 0 ? "Update" : "Submit")
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/Admin_assets/js/ClinetSideValidation.js"></script>

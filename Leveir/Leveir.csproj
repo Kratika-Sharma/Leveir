@@ -323,9 +323,13 @@
     <Content Include="Views\Admin\AddDiamondType.cshtml" />
     <Content Include="Views\Admin\AddMetals.cshtml" />
     <Content Include="Views\Admin\MetalLists.cshtml" />
+    <Content Include="Views\Admin\DiamondTypeLists.cshtml" />
+    <Content Include="Views\Admin\AddDiamonds.cshtml" />
+    <Content Include="Views\Admin\DiamondLists.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Admin_assets\images\UploadedImages\DiamondImages\" />
     <Folder Include="Content\Admin_assets\images\UploadedImages\JewelryType\" />
     <Folder Include="Content\User_assets\" />
     <Folder Include="Views\Home\" />

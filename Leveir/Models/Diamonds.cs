@@ -18,6 +18,7 @@ namespace Leveir.Models
         public decimal Price { get; set; }
         public int StockQuantity { get; set; }
         public HttpPostedFileBase DiamondImg { get; set; }
+        public string DiamondImgName { get; set; }
         public DateTime Created_dt { get; set; }
     }
 }

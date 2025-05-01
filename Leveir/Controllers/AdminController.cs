@@ -445,7 +445,7 @@ namespace Leveir.Controllers
                             cmd.Parameters.AddWithValue("@MetalQuantity", metals.MetalQuantity);
                             cmd.Parameters.AddWithValue("@MetalCarat", metals.MetalCarat);
                             cmd.Parameters.AddWithValue("@Created_dt", DateTime.Now);
-                            con.Open();
+                           // con.Open();
                             cmd.ExecuteNonQuery();
                             TempData["MetalSuccessMsg"] = "Metal Added Successfully!";
                             return RedirectToAction("MetalLists");
@@ -537,40 +537,344 @@ namespace Leveir.Controllers
         //Add Diamond Type Code Start Here
 
         [HttpGet]
-        public ActionResult AddDiamondType()
+        public ActionResult AddDiamondType(int? id)
         {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult AddDiamondType(Diamonds diamonds)
-        {
+            Diamonds model = new Diamonds();
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                if (id.HasValue)
                 {
-                    string query = "INSERT INTO tbl_DiamondType(DiamondTypeName)VALUES(@DiamondTypeName)";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlConnection conn = new SqlConnection(connectionString))
                     {
-                        cmd.Parameters.AddWithValue("@DiamondTypeName", diamonds.DiamondTypeName);
-                        conn.Open();
-                        int rowsAffected =  cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
+                        string query = "SELECT DiamondTypeId, DiamondTypeName FROM tbl_DiamondType WHERE DiamondTypeId = @DiamondTypeId";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            TempData["DiamondTypeSuccMsg"] = "Diamond Type Recorded Successfully";
-                            return RedirectToAction("AddDiamondType", "Admin");
+                            cmd.Parameters.AddWithValue("@DiamondTypeId", id);
+                            conn.Open();
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    model.DiamondTypeId = Convert.ToInt32(reader["DiamondTypeId"]);
+                                    model.DiamondTypeName = Convert.ToString(reader["DiamondTypeName"]);
+                                }
+                            }
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-              ViewBag.Error = "Error" + ex.Message; 
+                ViewBag.ErrorMsg = "Error: " + ex.Message;
             }
-            return View();  
+
+            return View(model);
         }
-    
-   //Add Diamond Type Code End Here
+        [HttpPost]
+        public ActionResult AddDiamondType(Diamonds model)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    if (model.DiamondTypeId > 0)
+                    {
+                        string query = "UPDATE tbl_DiamondType SET DiamondTypeName = @DiamondTypeName WHERE DiamondTypeId = @DiamondTypeId";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@DiamondTypeId", model.DiamondTypeId);
+                            cmd.Parameters.AddWithValue("@DiamondTypeName", model.DiamondTypeName);
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                TempData["DiamondTypeSuccMsg"] = "Diamond Type Updated Successfully";
+                                return RedirectToAction("DiamondTypeLists", "Admin");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string query = "INSERT INTO tbl_DiamondType(DiamondTypeName) VALUES(@DiamondTypeName)";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@DiamondTypeName", model.DiamondTypeName);
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                TempData["DiamondTypeSuccMsg"] = "Diamond Type Recorded Successfully";
+                                return RedirectToAction("DiamondTypeLists", "Admin");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error: " + ex.Message;
+            }
+
+            return View(model);
+        }
+
+        //Add Diamond Type Code End Here
+
+        //Diamond Type Lists Code Start Here
+        public ActionResult DiamondTypeLists()
+        {
+            List<Diamonds> diamondslists = new List<Diamonds>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT * FROM tbl_DiamondType";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                diamondslists.Add(new Diamonds()
+                                {
+                                    DiamondTypeId = Convert.ToInt32(reader["DiamondTypeId"]),
+                                    DiamondTypeName = Convert.ToString(reader["DiamondTypeName"]),
+                                    Created_dt = Convert.ToDateTime(reader["Created_dt"])
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error" + ex.Message;
+            }
+            return View(diamondslists);
+        }
+        //Diamond Type Lists Code End Here
+
+        //Add Diamond Code Start Here
+
+        [HttpGet]
+        public ActionResult AddDiamonds(int? id)
+        {
+            Diamonds model = new Diamonds();
+            List<Diamonds> diamondtypes = new List<Diamonds>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT * FROM tbl_DiamondType";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                diamondtypes.Add(new Diamonds()
+                                {
+                                    DiamondTypeId = Convert.ToInt32(reader["DiamondTypeId"]),
+                                    DiamondTypeName = Convert.ToString(reader["DiamondTypeName"]),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error" + ex.Message;
+            }
+            ViewBag.DiamondLists = diamondtypes;
+
+            if (!id.HasValue)
+            {
+                ViewBag.DiamondLists = diamondtypes;
+                return View(model);
+            }
+            else
+            {
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string query = "SELECT * FROM tbl_Diamond WHERE DiamondId = @id";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            conn.Open();
+                            cmd.Parameters.AddWithValue("@id", id.Value);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    model.DiamondId = Convert.ToInt32(reader["DiamondId"]);
+                                    model.DiamondTypeId = Convert.ToInt32(reader["DiamondTypeId"]);
+                                    model.Shape = Convert.ToString(reader["Shape"]);
+                                    model.Color = Convert.ToString(reader["Color"]);
+                                    model.Clarity = Convert.ToString(reader["Clarity"]);
+                                    model.Carat = Convert.ToString(reader["Carat"]);
+                                    model.Cut = Convert.ToString(reader["Cut"]);
+                                    model.Price = Convert.ToDecimal(reader["Price"]);
+                                    model.StockQuantity = Convert.ToInt32(reader["StockQuantity"]);
+                                    model.DiamondImgName = Convert.ToString(reader["DiamondImg"]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = "Error" + ex.Message;
+                }
+
+
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult AddDiamonds(Diamonds model)
+        {
+            try
+            {
+                string fileName = model.DiamondImgName;
+
+                if (model.DiamondImg != null && model.DiamondImg.ContentLength > 0)
+                {
+                    fileName = Path.GetFileName(model.DiamondImg.FileName);
+                    string filePath = Path.Combine(Server.MapPath("/Content/Admin_assets/images/UploadedImages/DiamondImages/"), fileName);
+                    model.DiamondImg.SaveAs(filePath);
+                }
+
+                if (model.DiamondId > 0)
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string query = "UPDATE tbl_Diamond SET DiamondTypeId = @DiamondTypeId, Shape = @Shape, Color = @Color, Clarity = @Clarity, Carat = @Carat, Cut = @Cut, Price = @Price, StockQuantity = @StockQuantity, DiamondImg = @DiamondImg WHERE DiamondId = @DiamondId";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@DiamondId", model.DiamondId);
+                            cmd.Parameters.AddWithValue("@DiamondTypeId", model.DiamondTypeId);
+                            cmd.Parameters.AddWithValue("@Shape", model.Shape);
+                            cmd.Parameters.AddWithValue("@Color", model.Color);
+                            cmd.Parameters.AddWithValue("@Clarity", model.Clarity);
+                            cmd.Parameters.AddWithValue("@Carat", model.Carat);
+                            cmd.Parameters.AddWithValue("@Cut", model.Cut);
+                            cmd.Parameters.AddWithValue("@Price", model.Price);
+                            cmd.Parameters.AddWithValue("@StockQuantity", model.StockQuantity);
+                            cmd.Parameters.AddWithValue("@DiamondImg", fileName);
+
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                TempData["DiamondAddSuccMsg"] = "Diamond Updated Successfully";
+                                return RedirectToAction("DiamondLists", "Admin");
+                            }
+                            else
+                            {
+                                return View();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        string query = "INSERT INTO tbl_Diamond (DiamondTypeId, Shape, Color, Clarity, Carat, Cut, Price, StockQuantity, DiamondImg)" +
+                            "VALUES(@DiamondTypeId, @Shape, @Color, @Clarity, @Carat, @Cut, @Price, @StockQuantity, @DiamondImg)";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@DiamondId", model.DiamondId);
+                            cmd.Parameters.AddWithValue("@DiamondTypeId", model.DiamondTypeId);
+                            cmd.Parameters.AddWithValue("@Shape", model.Shape);
+                            cmd.Parameters.AddWithValue("@Color", model.Color);
+                            cmd.Parameters.AddWithValue("@Clarity", model.Clarity);
+                            cmd.Parameters.AddWithValue("@Carat", model.Carat);
+                            cmd.Parameters.AddWithValue("@Cut", model.Cut);
+                            cmd.Parameters.AddWithValue("@Price", model.Price);
+                            cmd.Parameters.AddWithValue("@StockQuantity", model.StockQuantity);
+                            cmd.Parameters.AddWithValue("@DiamondImg", fileName);
+
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                TempData["DiamondAddSuccMsg"] = "Diamond Recorded Successfully";
+                                return RedirectToAction("DiamondLists", "Admin");
+                            }
+                            else
+                            {
+                                return View();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                ViewBag.ErrorMessage = Ex.Message;
+            }
+            return View();
+        }
+
+        //Add Diamond Code End Here
+
+        //Diamond Lists Code Start Here
+
+        [HttpGet]
+        public ActionResult DiamondLists()
+        {
+            List<Diamonds> diamondLists = new List<Diamonds>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT B.*, A.DiamondTypeName FROM tbl_DiamondType AS A INNER JOIN tbl_Diamond AS B ON A.DiamondTypeId = B.DiamondTypeId";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                diamondLists.Add(new Diamonds()
+                                {
+                                    DiamondId = Convert.ToInt32(reader["DiamondId"]),
+                                    DiamondTypeId = Convert.ToInt32(reader["DiamondTypeId"]),
+                                    DiamondTypeName = Convert.ToString(reader["DiamondTypeName"]),
+                                    Shape = Convert.ToString(reader["Shape"]),
+                                    Color = Convert.ToString(reader["Color"]),
+                                    Clarity = Convert.ToString(reader["Clarity"]),
+                                    Carat = Convert.ToString(reader["Carat"]),
+                                    Cut = Convert.ToString(reader["Cut"]),
+                                    Price = Convert.ToDecimal(reader["Price"]),
+                                    StockQuantity = Convert.ToInt32(reader["StockQuantity"]),
+                                    DiamondImgName = Convert.ToString(reader["DiamondImg"]),
+                                    Created_dt = Convert.ToDateTime(reader["Created_dt"])
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error" + ex.Message;
+            }
+            return View(diamondLists);
+        }
+
+        //Diamond Lists Code End Here
 
 
 
